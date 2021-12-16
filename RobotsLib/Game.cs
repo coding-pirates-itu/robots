@@ -9,9 +9,9 @@ public sealed class Game
 
     private readonly GameField mField;
 
-    private int mPlayerX;
+    private int mPlayerX = -1;
 
-    private int mPlayerY;
+    private int mPlayerY = -1;
 
     #endregion
 
@@ -56,6 +56,7 @@ public sealed class Game
         switch (command)
         {
             case Commands.Die:
+                mField.SetCell(mPlayerX, mPlayerY, CellStates.Rip);
                 IsEnded = true;
                 break;
             case Commands.Up:
@@ -72,6 +73,9 @@ public sealed class Game
                 break;
             case Commands.Stay:
                 MoveRobots();
+                break;
+            case Commands.Teleport:
+                if (SetPlayerLocationSafe()) MoveRobots();
                 break;
         }
     }
@@ -103,6 +107,9 @@ public sealed class Game
     /// <returns><see langword="true"/> if such a place was found, false if not</returns>
     private bool SetPlayerLocationSafe()
     {
+        if (mPlayerX >= 0 && mPlayerY >= 0 && mPlayerX < mField.Width && mPlayerY < mField.Height)
+            mField.SetCell(mPlayerX, mPlayerY, CellStates.Empty);
+
         var locations = Enumerable.Range(0, mField.Width * mField.Height).OrderBy(x => mRnd.Next()).ToArray();
         
         foreach (var loc in locations)
@@ -144,6 +151,53 @@ public sealed class Game
 
     private void MoveRobots()
     {
+        var temp = new GameField(mField.Width, mField.Height);
+
+        for (var y = 0; y < mField.Height; y++)
+            for (var x = 0; x < mField.Width; x++)
+            {
+                if (mField.GetCell(x, y) == CellStates.Robot)
+                {
+                    var nx = x + Math.Sign(mPlayerX - x);
+                    var ny = y + Math.Sign(mPlayerY - y);
+
+                    switch (temp.GetCell(nx, ny))
+                    {
+                        case CellStates.Player:
+                        case CellStates.Rip:
+                            IsEnded = true;
+                            mField.SetCell(nx, ny, CellStates.Rip);
+                            return;
+                        case CellStates.Empty:
+                            temp.SetCell(nx, ny, CellStates.Robot);
+                            break;
+                        case CellStates.Robot:
+                            temp.SetCell(nx, ny, CellStates.Trash);
+                            break;
+                        case CellStates.Trash:
+                            break;
+                    }
+                }
+                else if (! mField.IsCellEmpty(x, y))
+                {
+                    temp.SetCell(x, y, mField.GetCell(x, y));
+                }
+            }
+
+        var robots = 0;
+        for (var y = 0; y < mField.Height; y++)
+            for (var x = 0; x < mField.Width; x++)
+            {
+                mField.SetCell(x, y, temp.GetCell(x, y));
+                if (temp.GetCell(x, y) == CellStates.Robot)
+                    robots++;
+            }
+
+        if (robots == 0)
+        {
+            mField.SetCell(mPlayerX, mPlayerY, CellStates.Won);
+            IsEnded = true;
+        }
     }
 
     #endregion

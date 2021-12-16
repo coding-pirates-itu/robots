@@ -7,5 +7,6 @@ public enum CellStates
     Robot,
     Player,
     Trash,
-    Rip
+    Rip,
+    Won
 }

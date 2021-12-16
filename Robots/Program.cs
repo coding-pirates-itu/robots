@@ -1,4 +1,5 @@
 ﻿using RobotsLib;
+using System.Drawing;
 
 
 var width = 8;
@@ -12,30 +13,47 @@ while (!game.IsEnded)
     game.Execute(command);
 }
 
+WriteField(game);
+
 
 void WriteField(Game game)
 {
     Console.SetCursorPosition(0, 0);
+    var frame = ConsoleColor.Gray;
+    Console.ForegroundColor = frame;
     Console.WriteLine("ROBOTS");
     WriteHorizontalLine(width);
 
     for (int y = 0; y < height; y++)
     {
+        Console.ForegroundColor = frame;
         Console.Write('|');
 
         for (int x = 0; x < width; x++)
         {
             var sym = game.Cell(x, y) switch
             {
-                CellStates.Robot => "oo",
-                CellStates.Player => "><",
-                CellStates.Trash => "WW",
+                CellStates.Robot => "}{",
+                CellStates.Player => "<>",
+                CellStates.Trash => "/\\",
                 CellStates.Rip => "xx",
+                CellStates.Won => "!!",
                 _ => "  "
             };
+            var color = game.Cell(x, y) switch
+            {
+                CellStates.Robot => ConsoleColor.Red,
+                CellStates.Player => ConsoleColor.White,
+                CellStates.Trash => ConsoleColor.Blue,
+                CellStates.Rip => ConsoleColor.Gray,
+                CellStates.Won => ConsoleColor.Yellow,
+                _ => ConsoleColor.White
+            };
+            Console.ForegroundColor = color;
             Console.Write(sym);
         }
 
+        Console.ForegroundColor = frame;
         Console.WriteLine('|');
     }
 
@@ -59,7 +77,8 @@ Commands GetInput()
         ConsoleKey.DownArrow => Commands.Down,
         ConsoleKey.LeftArrow => Commands.Left,
         ConsoleKey.RightArrow => Commands.Right,
-        ConsoleKey.Spacebar => Commands.Stay,
+        ConsoleKey.W => Commands.Stay,
+        ConsoleKey.Spacebar => Commands.Teleport,
         ConsoleKey.Escape => Commands.Die,
         _ => Commands.None
     };
