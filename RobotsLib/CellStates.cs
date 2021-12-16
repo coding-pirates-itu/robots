@@ -1,10 +1,11 @@
 ﻿namespace RobotsLib;
 
 
-public enum CellState
+public enum CellStates
 {
     Empty,
     Robot,
     Player,
-    Trash
+    Trash,
+    Rip
 }

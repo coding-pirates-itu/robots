@@ -5,25 +5,32 @@ var width = 8;
 var height = 8;
 var game = new Game(width, height, 10);
 
-WriteField(game);
+while (!game.IsEnded)
+{
+    WriteField(game);
+    var command = GetInput();
+    game.Execute(command);
+}
 
 
 void WriteField(Game game)
 {
     Console.SetCursorPosition(0, 0);
     Console.WriteLine("ROBOTS");
-    WriteHorizontalLine(width * 2);
+    WriteHorizontalLine(width);
 
     for (int y = 0; y < height; y++)
     {
         Console.Write('|');
+
         for (int x = 0; x < width; x++)
         {
             var sym = game.Cell(x, y) switch
             {
-                CellState.Robot => "@@",
-                CellState.Player => "><",
-                CellState.Trash => "XX",
+                CellStates.Robot => "oo",
+                CellStates.Player => "><",
+                CellStates.Trash => "WW",
+                CellStates.Rip => "xx",
                 _ => "  "
             };
             Console.Write(sym);
@@ -32,13 +39,28 @@ void WriteField(Game game)
         Console.WriteLine('|');
     }
 
-    WriteHorizontalLine(width * 2);
+    WriteHorizontalLine(width);
 }
 
 
 void WriteHorizontalLine(int width)
 {
-    Console.Write("+");
-    Console.Write(new string('-', width));
-    Console.WriteLine("+");
+    Console.WriteLine("+" + new string('-', width * 2) + "+");
+}
+
+
+Commands GetInput()
+{
+    var ch = Console.ReadKey();
+
+    return ch.Key switch
+    {
+        ConsoleKey.UpArrow => Commands.Up,
+        ConsoleKey.DownArrow => Commands.Down,
+        ConsoleKey.LeftArrow => Commands.Left,
+        ConsoleKey.RightArrow => Commands.Right,
+        ConsoleKey.Spacebar => Commands.Stay,
+        ConsoleKey.Escape => Commands.Die,
+        _ => Commands.None
+    };
 }

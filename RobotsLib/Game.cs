@@ -3,11 +3,34 @@
 
 public sealed class Game
 {
+    #region Fields
+
     private readonly Random mRnd;
 
     private readonly GameField mField;
 
+    private int mPlayerX;
 
+    private int mPlayerY;
+
+    #endregion
+
+
+    #region Properties
+
+    public bool IsEnded { get; private set; }
+
+    #endregion
+
+
+    #region Init and clean-up
+
+    /// <summary>
+    /// Initialize the game state and field.
+    /// </summary>
+    /// <param name="width">Field width</param>
+    /// <param name="height">Field height</param>
+    /// <param name="robots">Number of robots</param>
     public Game(int width, int height, int robots)
     {
         mField = new(width, height);
@@ -20,13 +43,43 @@ public sealed class Game
         while (! SetPlayerLocationSafe());
     }
 
+    #endregion
+
 
     #region API
 
-    public CellState Cell(int x, int y) => mField.GetCell(x, y);
+    public CellStates Cell(int x, int y) => mField.GetCell(x, y);
+
+
+    public void Execute(Commands command)
+    {
+        switch (command)
+        {
+            case Commands.Die:
+                IsEnded = true;
+                break;
+            case Commands.Up:
+                if (MovePlayer(mPlayerX, mPlayerY - 1)) MoveRobots();
+                break;
+            case Commands.Down:
+                if (MovePlayer(mPlayerX, mPlayerY + 1)) MoveRobots();
+                break;
+            case Commands.Left:
+                if (MovePlayer(mPlayerX - 1, mPlayerY)) MoveRobots();
+                break;
+            case Commands.Right:
+                if (MovePlayer(mPlayerX + 1, mPlayerY)) MoveRobots();
+                break;
+            case Commands.Stay:
+                MoveRobots();
+                break;
+        }
+    }
 
     #endregion
 
+
+    #region Utility
 
     private void PlaceRobots(int robots)
     {
@@ -35,16 +88,17 @@ public sealed class Game
             var x = mRnd.Next(mField.Width);
             var y = mRnd.Next(mField.Height);
 
-            if (mField.GetCell(x, y) != CellState.Empty) continue;
+            if (mField.GetCell(x, y) != CellStates.Empty) continue;
 
-            mField.SetCell(x, y, CellState.Robot);
+            mField.SetCell(x, y, CellStates.Robot);
             robots--;
         }
     }
 
 
     /// <summary>
-    /// Set player such that he is surrounded by empty cells.
+    /// Set player location such that it is surrounded by empty cells.
+    /// If returns <see langword="true"/>, <see cref="mPlayerX"/> and <see cref="mPlayerY"/> are set.
     /// </summary>
     /// <returns><see langword="true"/> if such a place was found, false if not</returns>
     private bool SetPlayerLocationSafe()
@@ -62,10 +116,35 @@ public sealed class Game
 
             if (isOccupied) continue;
 
-            mField.SetCell(x, y, CellState.Player);
+            mField.SetCell(x, y, CellStates.Player);
+            mPlayerX = x;
+            mPlayerY = y;
+
             return true;
         }
 
         return false;
     }
+
+
+    private bool MovePlayer(int x, int y)
+    {
+        if (x < 0 || y < 0) return false;
+        if (x >= mField.Width || y >= mField.Height) return false;
+        if (mField.GetCell(x, y) != CellStates.Empty) return false;
+
+        mField.SetCell(mPlayerX, mPlayerY, CellStates.Empty);
+        mField.SetCell(x, y, CellStates.Player);
+        mPlayerX = x;
+        mPlayerY = y;
+
+        return true;
+    }
+
+
+    private void MoveRobots()
+    {
+    }
+
+    #endregion
 }
