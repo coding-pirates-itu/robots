@@ -4,10 +4,14 @@
 public enum Commands
 {
     None,
-    Up,
-    Down,
     Left,
+    UpLeft,
+    Up,
+    UpRight,
     Right,
+    DownRight,
+    Down,
+    DownLeft,
     Stay,
     Die,
     Teleport

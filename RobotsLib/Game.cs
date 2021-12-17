@@ -59,17 +59,29 @@ public sealed class Game
                 mField.SetCell(mPlayerX, mPlayerY, CellStates.Rip);
                 IsEnded = true;
                 break;
+            case Commands.Left:
+                if (MovePlayer(mPlayerX - 1, mPlayerY)) MoveRobots();
+                break;
+            case Commands.UpLeft:
+                if (MovePlayer(mPlayerX - 1, mPlayerY - 1)) MoveRobots();
+                break;
             case Commands.Up:
                 if (MovePlayer(mPlayerX, mPlayerY - 1)) MoveRobots();
+                break;
+            case Commands.UpRight:
+                if (MovePlayer(mPlayerX + 1, mPlayerY - 1)) MoveRobots();
+                break;
+            case Commands.Right:
+                if (MovePlayer(mPlayerX + 1, mPlayerY)) MoveRobots();
+                break;
+            case Commands.DownRight:
+                if (MovePlayer(mPlayerX + 1, mPlayerY + 1)) MoveRobots();
                 break;
             case Commands.Down:
                 if (MovePlayer(mPlayerX, mPlayerY + 1)) MoveRobots();
                 break;
-            case Commands.Left:
-                if (MovePlayer(mPlayerX - 1, mPlayerY)) MoveRobots();
-                break;
-            case Commands.Right:
-                if (MovePlayer(mPlayerX + 1, mPlayerY)) MoveRobots();
+            case Commands.DownLeft:
+                if (MovePlayer(mPlayerX - 1, mPlayerY + 1)) MoveRobots();
                 break;
             case Commands.Stay:
                 MoveRobots();
