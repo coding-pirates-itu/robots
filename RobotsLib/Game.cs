@@ -18,6 +18,10 @@ public sealed class Game
 
     #region Properties
 
+    public int Width => mField.Width;
+    
+    public int Height => mField.Height;
+
     public bool IsEnded { get; private set; }
 
     #endregion

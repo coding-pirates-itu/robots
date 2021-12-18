@@ -1,5 +1,4 @@
 ﻿using RobotsLib;
-using System.Drawing;
 
 
 var width = 8;
@@ -8,66 +7,15 @@ var game = new Game(width, height, 10);
 
 while (!game.IsEnded)
 {
-    WriteField(game);
+    Robots.Renderer.WriteField(game);
     var command = GetInput();
     game.Execute(command);
 }
 
-WriteField(game);
+Robots.Renderer.WriteField(game);
 
 
-void WriteField(Game game)
-{
-    Console.SetCursorPosition(0, 0);
-    var frame = ConsoleColor.Gray;
-    Console.ForegroundColor = frame;
-    Console.WriteLine("ROBOTS");
-    WriteHorizontalLine(width);
-
-    for (int y = 0; y < height; y++)
-    {
-        Console.ForegroundColor = frame;
-        Console.Write('|');
-
-        for (int x = 0; x < width; x++)
-        {
-            var sym = game.Cell(x, y) switch
-            {
-                CellStates.Robot => "}{",
-                CellStates.Player => "<>",
-                CellStates.Trash => "/\\",
-                CellStates.Rip => "xx",
-                CellStates.Won => "!!",
-                _ => "  "
-            };
-            var color = game.Cell(x, y) switch
-            {
-                CellStates.Robot => ConsoleColor.Red,
-                CellStates.Player => ConsoleColor.White,
-                CellStates.Trash => ConsoleColor.Blue,
-                CellStates.Rip => ConsoleColor.Gray,
-                CellStates.Won => ConsoleColor.Yellow,
-                _ => ConsoleColor.White
-            };
-            Console.ForegroundColor = color;
-            Console.Write(sym);
-        }
-
-        Console.ForegroundColor = frame;
-        Console.WriteLine('|');
-    }
-
-    WriteHorizontalLine(width);
-}
-
-
-void WriteHorizontalLine(int width)
-{
-    Console.WriteLine("+" + new string('-', width * 2) + "+");
-}
-
-
-Commands GetInput()
+static Commands GetInput()
 {
     var ch = Console.ReadKey();
 
