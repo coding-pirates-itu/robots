@@ -1,4 +1,4 @@
-﻿using RobotsLib;
+﻿using Robots.Lib;
 
 
 var width = 8;

@@ -1,0 +1,37 @@
+﻿@page "/"
+
+<PageTitle>Robots game</PageTitle>
+
+<EditForm Model="@this" OnValidSubmit="@StartNewGame">
+    <div class="table">
+        <div class="row">
+            <div class="col-1 align-self-center">Width:</div>
+            <InputNumber class="col-1" @bind-Value="Width"/>
+            <div class="col-1 align-self-center">Height:</div>
+            <InputNumber class="col-1" @bind-Value="Height"/>
+            <div class="col-1 align-self-center">Robots:</div>
+            <InputNumber class="col-1" @bind-Value="Robots"/>
+            <button type="submit" class="col-1 btn btn-primary">New game</button>
+        </div>
+    </div>
+</EditForm>
+
+@if (mGame != null)
+{
+    <Renderer Game="@mGame"/>
+}
+
+
+@code {
+    int Width { get; set; } = 8;
+    int Height { get; set; } = 8;
+    int Robots { get; set; } = 10;
+
+    Game? mGame;
+
+
+    private void StartNewGame()
+    {
+        mGame = new Game(Width, Height, Robots);
+    }
+}

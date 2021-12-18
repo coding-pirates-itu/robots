@@ -1,0 +1,37 @@
+﻿@code {
+    [Parameter]
+    public Game Game { get; set; }
+}
+
+<div class="table table-bordered">
+    @for (var y = 0; y < Game.Height; y++)
+    {
+        <div class="row">
+        @for (var x = 0; x < Game.Width; x++)
+        {
+            var image = Game.Cell(x, y) switch
+            {
+                CellStates.Robot => "robot",
+                CellStates.Player => "player",
+                CellStates.Trash => "trash",
+                CellStates.Rip => "rip",
+                CellStates.Won => "won",
+                _ => ""
+            };
+
+            <div class="col-1 field-cell">
+                @if (!string.IsNullOrEmpty(image))
+                {
+                    <div>
+                        <img src="./images/@(image).png" alt="@image"/>
+                    </div>
+                }
+                else
+                {
+                    <text>&nbsp;</text>
+                }
+            </div>
+        }
+        </div>
+    }
+</div>

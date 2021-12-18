@@ -1,0 +1,22 @@
+﻿.field-cell {
+    border: 1px solid black;
+    position: relative;
+}
+
+    .field-cell:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+    }
+
+    .field-cell div {
+        position: absolute;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+    }
+
+        .field-cell div img {
+            width: 100%;
+            height: 100%;
+        }
