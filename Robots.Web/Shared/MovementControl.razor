@@ -1,0 +1,58 @@
+﻿@code {
+    [Parameter]
+    public Game Game { get; set; }
+
+    [Parameter]
+    public EventCallback<EventArgs> OnGameUpdated { get; set; }
+}
+
+
+<div class="table">
+    <div class="row">
+        <btn class="col btn" @onclick="@(() => Do(Commands.UpLeft))">
+            <span class="oi oi-fullscreen-enter"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.Up))">
+            <span class="oi oi-arrow-circle-top"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.UpRight))">
+            <span class="oi oi-resize-both"></span>
+        </btn>
+    </div>
+    <div class="row">
+        <btn class="col btn" @onclick="@(() => Do(Commands.Left))">
+            <span class="oi oi-arrow-circle-left"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.Stay))">
+            <span class="oi oi-aperture"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.Right))">
+            <span class="oi oi-arrow-circle-right"></span>
+        </btn>
+    </div>
+    <div class="row">
+        <btn class="col btn" @onclick="@(() => Do(Commands.DownLeft))">
+            <span class="oi oi-resize-both"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.Down))">
+            <span class="oi oi-arrow-circle-bottom"></span>
+        </btn>
+        <btn class="col btn" @onclick="@(() => Do(Commands.DownRight))">
+            <span class="oi oi-fullscreen-enter"></span>
+        </btn>
+    </div>
+    <div class="row">
+        <btn class="col btn" @onclick="@(() => Do(Commands.Teleport))">
+            <span class="oi oi-bolt"></span>
+        </btn>
+    </div>
+</div>
+
+
+@code {
+    private void Do(Commands command)
+    {
+        Game.Execute(command);
+        OnGameUpdated.InvokeAsync(EventArgs.Empty);
+    }
+}
